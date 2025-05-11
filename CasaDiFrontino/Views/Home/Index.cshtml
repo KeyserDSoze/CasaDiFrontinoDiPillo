@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<header>
+    <div class="hero-content">
+        <h1>Benvenuti nella casa di Pillo a Frontino</h1>
+        <p>Il tuo rifugio perfetto per una vacanza indimenticabile</p>
+    </div>
+</header>
+
+<section class="about">
+    <h2>La Casa</h2>
+    <p>
+        Situata nel cuore della natura, la nostra casa vacanza offre comfort moderni
+        e un'atmosfera accogliente per rilassarsi dopo una giornata di avventure.
+        Goditi gli ambienti spaziosi, un giardino panoramico e tutta l'autenticità
+        di un soggiorno in famiglia.
+    </p>
+    <div class="gallery" id="gallery"></div>
+</section>
+
+<footer>
+    <p>
+        Contattaci: <a href="mailto:info@casavacanzapillo.it">info@casavacanzapillo.it</a>
+    </p>
+    <p>
+        Visita: <a href="https://www.facebook.com/p/La-Casa-di-Pillo-a-Frontino-100042583646372/">Facebook</a>
+    </p>
+    <p>&copy; <span id="year"></span> B&B Casa di Pillo a Frontino. Tutti i diritti riservati.</p>
+</footer>
+
+<div class="lightbox" id="lightbox">
+    <div class="lightbox-background" id="lightbox-background"></div>
+    <span class="arrow left" id="prevBtn">&#10094;</span>
+    <img src="" class="image-show" alt="Anteprima immagine" />
+    <span class="arrow right" id="nextBtn">&#10095;</span>
+</div>
+
+@section Scripts {
+    <script>
+        const images = [
+          "/images/20170813_175402.jpg",
+          "/images/20171021_082320.jpg",
+          "/images/20171105_090616.jpg",
+          "/images/20171112_103812.jpg",
+          "/images/20171119_090404.jpg",
+          "/images/20171209_164807.jpg",
+          "/images/20171209_173623.jpg",
+          "/images/20201108_083310.jpg",
+          "/images/20231022_093928.jpg",
+          "/images/20231111_095901.jpg",
+          "/images/20231111_095925.jpg",
+          "/images/20231111_095948.jpg",
+          "/images/20231111_100014.jpg",
+          "/images/20240113_161304.jpg",
+          "/images/20240128_141758.jpg",
+          "/images/20240128_141806.jpg",
+          "/images/20240128_154615.jpg",
+          "/images/20240202_073734.jpg",
+          "/images/20240404_103523.jpg",
+          "/images/20240404_103530.jpg",
+          "/images/20240404_190417.jpg",
+          "/images/20240421_170922.jpg",
+          "/images/20240505_093550.jpg",
+          "/images/20240505_093606.jpg",
+          "/images/20240505_120944.jpg",
+          "/images/20240623_164413.jpg",
+          "/images/20250419_151138.jpg",
+          "/images/IMG_20240113_134338_241.jpg",
+          "/images/IMG-20241004-WA0002(1).jpg",
+          "/images/scale.jpeg",
+          "/images/WhatsApp Image 2024-10-04 at 10.53.42.jpeg",
+          "/images/WP_001054.jpg",
+          "/images/WP_001067.jpg",
+          "/images/WP_001094.jpg",
+          "/images/WP_001194.jpg",
+          "/images/WP_20140817_002.jpg",
+          "/images/WP_20151115_006 (2).jpg",
+          "/images/WP_20151206_003.jpg",
+          "/images/WP_20151212_005.jpg",
+          "/images/WP_20151220_002.jpg",
+          "/images/WP_20160716_013.jpg",
+          "/images/WP_20161112_006.jpg",
+          "/images/WP_20161225_12_01_25_Pro.jpg",
+          "/images/WP_20161225_12_01_39_Pro.jpg",
+          "/images/WP_20170701_18_36_15_Rich.jpg",
+          "/images/WP_20170701_19_02_06_Rich.jpg"
+        ];
+
+
+        const gallery = document.getElementById("gallery");
+        const lightbox = document.getElementById("lightbox");
+        const lightboxBackground = document.getElementById("lightbox-background");
+        const lightboxImg = lightbox.querySelector("img");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        let currentIndex = 0;
+
+        function loadGallery() {
+          images.forEach((src, index) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = "Foto casa vacanza";
+            img.loading = "lazy";
+            img.addEventListener("click", () => openLightbox(index));
+            gallery.appendChild(img);
+          });
+        }
+
+        function openLightbox(index) {
+          currentIndex = index;
+          updateLightbox();
+          lightbox.classList.add("open");
+        }
+
+        function updateLightbox() {
+          lightboxImg.src = images[currentIndex];
+        }
+
+        function closeLightbox() {
+          lightbox.classList.remove("open");
+        }
+
+        function nextImage() {
+          currentIndex = (currentIndex + 1) % images.length;
+          updateLightbox();
+        }
+
+        function prevImage() {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+          updateLightbox();
+        }
+
+        lightboxBackground.addEventListener("click", (e) => {
+          closeLightbox();
+        });
+
+        prevBtn.addEventListener("click", prevImage);
+        nextBtn.addEventListener("click", nextImage);
+
+        document.addEventListener("keydown", (e) => {
+          if (!lightbox.classList.contains("open")) return;
+          if (e.key === "ArrowRight") nextImage();
+          if (e.key === "ArrowLeft") prevImage();
+          if (e.key === "Escape") closeLightbox();
+        });
+
+        let touchStartX = 0;
+        lightbox.addEventListener("touchstart", (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        });
+
+        lightbox.addEventListener("touchend", (e) => {
+          const touchEndX = e.changedTouches[0].screenX;
+          const deltaX = touchEndX - touchStartX;
+
+          if (Math.abs(deltaX) > 50) {
+            if (deltaX > 0) prevImage();
+            else nextImage();
+          }
+        });
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+        document.addEventListener("DOMContentLoaded", loadGallery);
+    </script>
+}
+
